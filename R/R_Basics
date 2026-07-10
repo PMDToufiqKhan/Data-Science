@@ -1,0 +1,84 @@
+## ---- packages ----
+# install.packages("e1071")
+library(e1071)                # for skewness / kurtosis
+
+## ---- load data ----
+airquality <- datasets::airquality   # built-in dataframe
+
+## ---- quick peek ----
+head(airquality, 10)   # first 10 rows
+tail(airquality, 10)   # last 10 rows
+str(airquality)        # column types
+summary(airquality)    # basic stats
+
+## ---- a couple of column tricks ----
+airquality[, 1:2]      # Ozone + Solar.R
+df <- airquality[, -6] # drop “Day” exclude the 6 column
+
+## ---- single-variable stats ----
+summary(airquality$Wind)
+var(airquality$Ozone,  na.rm = TRUE)
+sd (airquality$Ozone,  na.rm = TRUE)
+skewness (airquality$Ozone, na.rm = TRUE)   
+# 0 to ±0.5 ≈ symmetric
+# ±0.5 to ±1 ≈ moderately skewed
+# > ±1 ≈ strongly skewed
+# positive -> right skewed : negative -> left skewed
+
+kurtosis (airquality$Ozone, na.rm = TRUE)
+# < 0 Platykurtic (flat)
+# ≈ 0 Mesokurtic (normal-like)
+# > 0 Leptokurtic (peaked / heavy-tailed)
+
+## ---- basic plots (base graphics) ----
+par(mfrow = c(2, 2))             # 2×2 grid
+
+plot(airquality$Wind,
+     main = "Wind (scatter)", ylab = "mph")
+
+plot(airquality$Wind, type = "l",
+     main = "Wind (line)", ylab = "mph") # l -> lines, p -> points
+
+hist(airquality$Temp,
+     main = "Temperature", xlab = "°F", col = "skyblue")
+
+boxplot(airquality$Wind,
+        main = "Wind", ylab = "mph")
+
+par(mfrow = c(1, 1))             # back to 1 plot / window
+
+## one scatter
+plot(airquality$Temp, airquality$Wind,
+     main = "Wind vs Temp", xlab = "Temp (°F)", ylab = "Wind (mph)")
+
+## multi-boxplot for the first 4 numeric vars
+boxplot(airquality[, 1:4],
+        main = "Ozone / Solar.R / Wind / Temp")
+
+## a simple barplot
+barplot(airquality$Ozone,
+        horiz = TRUE, col = "orange",
+        main = "Ozone (each day)", xlab = "ppb")
+
+## density curve
+plot(density(airquality$Ozone, na.rm = TRUE),
+     main = "Ozone (kernel density)", xlab = "Ozone (ppb)")
+
+## ---- tiny layout demo (3 × 3) ----
+par(mfrow = c(3, 3), mar = c(2, 4, 2, 1), las = 1, bty = "o")
+plot(airquality$Ozone)
+plot(airquality$Ozone, airquality$Wind)
+plot(airquality$Ozone, type = "l")
+hist(airquality$Ozone, col = "grey")
+barplot(airquality$Ozone, horiz = TRUE)
+hist(airquality$Solar.R)
+boxplot(airquality$Solar.R)
+boxplot(airquality[, 1:4])
+plot(density(airquality$Wind, na.rm = TRUE))
+par(mfrow = c(1, 1), mar = c(5, 4, 4, 2))  # restore defaults
+# margin of the grid(mar), 
+# no of rows and columns(mfrow), 
+# whether a border is to be included(bty) 
+# and position of the 
+# labels(las: 1 for horizontal, las: 0 for vertical)
+# bty - box around the plot
